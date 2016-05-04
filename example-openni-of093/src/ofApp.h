@@ -33,10 +33,10 @@ public:
     void gotMessage(ofMessage msg);
     void userEvent(ofxOpenNIUserEvent & event);
     void mocapMax(MocapMaxEvent &e);
-    map<int,ofxKinectFeatures> featExtractors;
-//    ofxKinectFeatures featExtractors1;
-//    ofxKinectFeatures featExtractors2;
-//    ofxKinectFeatures featExtractors3;
+   // map<int,ofxKinectFeatures> featExtractors;
+    ofxKinectFeatures featExtractors1;
+    ofxKinectFeatures featExtractors2;
+    ofxKinectFeatures featExtractors3;
     
     vector<ofxOpenNIUser> prevUsers;
     
