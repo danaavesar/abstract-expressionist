@@ -21,7 +21,9 @@ public:
     void setup();
     void update();
     void draw();
-    
+    ofColor mixColor(ofColor color1, ofColor color2);
+    int clamp(int _value);
+    void drawShape(ofPoint _position);
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y);
@@ -34,13 +36,19 @@ public:
     void userEvent(ofxOpenNIUserEvent & event);
     void mocapMax(MocapMaxEvent &e);
    // map<int,ofxKinectFeatures> featExtractors;
-    ofxKinectFeatures featExtractors1;
-    ofxKinectFeatures featExtractors2;
-    ofxKinectFeatures featExtractors3;
-    
+    ofxKinectFeatures featExtractor1;
+    ofxKinectFeatures featExtractor2;
+    ofxKinectFeatures featExtractor3;
+    vector <ofxKinectFeatures> featExtractors;
+    vector <ofPoint> prevTorsoPos1;
+    vector <ofPoint> prevTorsoPos2;
+    vector <ofPoint> prevTorsoPos3;
+   
     vector<ofxOpenNIUser> prevUsers;
     
-    
+    vector<vector<ofPoint>> shapes;
+    //vector<vector<ofPoint>> prevTorsoPos;
+    vector <ofPoint> prevTorsoPos[3] = {prevTorsoPos1, prevTorsoPos2, prevTorsoPos3};
     ofxOpenNI kinect;
     bool hadUsers;
    // ofxKinectFeatures featExtractor;
@@ -49,11 +57,12 @@ public:
     int leftShoulder, rightShoulder;
     int leftHand;
     int torso;
+    int loop; //for counting when to multiply the num in delete prevTorsoArray
     ofPoint prevLeftHandPosTorso;
     vector <int> handJointNames = {JOINT_LEFT_HAND, JOINT_RIGHT_HAND};
     map <int,ofPoint> handJointProjectedPos; //ints representing the joints
     map <int,ofPoint> prevHandJointProjectedPos;
-    ofPoint prevLeftHipPos;
+    ofPoint prevLeftHipPos[3];
     ofTrueTypeFont font;
     
     //painting
@@ -66,6 +75,11 @@ public:
     ofImage canYellow;
     ofImage canRed;
     ofImage canBlue;
+    ofVideoPlayer whiteCanSplash;
+    ofVideoPlayer blackCanSplash;
+    ofVideoPlayer yellowCanSplash;
+    ofVideoPlayer redCanSplash;
+    ofVideoPlayer blueCanSplash;
     
     ofPoint blackPos;
     ofPoint whitePos;
@@ -85,11 +99,12 @@ public:
      bool showLabels;
     vector <int> lastHoleLabels;
     int frameNumber;
-    int timer;
+    int timer[3];
+    int timerForJump[3]; 
    map<int,ofPolyline> holesPolylines;
     vector <ofPolyline> createdShapes;
     int counter;
-    
+    int numJumps[3]; //count for jumps for each user
     // GUI
     ofxPanel gui;
     ofxFloatSlider thresh;

@@ -10,8 +10,9 @@
 
 
 //--------------------------------------------------------------
-void Stroke::setup( int ID){
+void Stroke::setup( int ID, ofColor _color){
     blobNumber = ID;
+    color = _color;
     //    color.r = ofRandom(0,255);
     //    color.g = ofRandom(0,255);
     //    color.b = ofRandom(0,255);
@@ -25,21 +26,11 @@ void Stroke::setup( int ID){
     
 }
 
-//--------------------------------------------------------------
-void Stroke::setColor(ofColor _color){
-    color = _color;
-    
-    //    if(color == red){
-    //        color.r = 255;
-    //        color.g = 0;
-    //        color.b = 0;
-    //    }
-}
+
 //--------------------------------------------------------------
 void Stroke::draw(){
     ofPushStyle();
     ofSetColor(color);
-    
     ofFill();
     for(int i=0; i<circles.size(); i++){
         circles[i].draw();
@@ -56,7 +47,6 @@ void Stroke::draw(){
     if(lines.size() > 1){
         for(int i=0; i<lines.size()-2; i++){
             ofSetLineWidth(lines[i+1].width/2); //line width dependent on last point in line (determined by how far it is from first point, variable labeled wrong, posEnd is actually beginning point in each line)
-            //            cout << lines[i].width << endl;
             ofBeginShape();
             //im actually drawing a bunch of little lines after one another so that i can manipulate the stroke width of each segement deoending on how fast the mouse is moving
             
@@ -94,7 +84,6 @@ void Stroke::loadPoints(int x, int y, int z, bool splash){
     
     ofPoint point;
     point.set(x,y);
-    //cout << "z value " << point.z << endl;
     line.addVertex(point);
    
     Line myLine;

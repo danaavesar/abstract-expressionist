@@ -31,7 +31,6 @@ void Circle::update(){
 void Circle::draw(){
     
     ofDrawEllipse(pos.x, pos.y, radius, radius);
-    cout << radius << endl;
     //    random splashes
     if(random <= 3){
         ofDrawEllipse(ranPosX, ranPosY, randomRadi, randomRadi);

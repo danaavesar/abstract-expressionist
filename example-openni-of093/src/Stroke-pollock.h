@@ -18,8 +18,7 @@
 class Stroke : public ofBaseApp{
     
 public:
-    void setup(int ID);
-    void setColor(ofColor color);
+    void setup(int ID, ofColor _color);
     void draw();
     void loadPoints(int x, int y, int z, bool splash);
     

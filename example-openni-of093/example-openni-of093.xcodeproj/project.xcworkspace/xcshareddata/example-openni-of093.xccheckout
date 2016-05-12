@@ -12,8 +12,8 @@
 	<dict>
 		<key>37526DA425E5430474A14FBFA1BC4525160B5FC1</key>
 		<string>https://github.com/kylemcdonald/ofxCv.git</string>
-		<key>D39B8F6EE98ACED29A09FA1B237FDDBC580DD296</key>
-		<string>https://github.com/danaavesar/Jackson-pollock-painting.git</string>
+		<key>5A1D184CF22FD78F52FF6FE1D4687588E0277DEB</key>
+		<string>https://github.com/danaavesar/abstract-expressionist.git</string>
 		<key>D7770A14563D2CF85508E1CB3D7DDC50864B9F47</key>
 		<string>https://github.com/asarasua/ofxKinectFeatures</string>
 		<key>D8811CE32924E36E8903BAF4011407E4BAF64556</key>
@@ -25,7 +25,7 @@
 	<dict>
 		<key>37526DA425E5430474A14FBFA1BC4525160B5FC1</key>
 		<string>../../../../../addons/ofxCv</string>
-		<key>D39B8F6EE98ACED29A09FA1B237FDDBC580DD296</key>
+		<key>5A1D184CF22FD78F52FF6FE1D4687588E0277DEB</key>
 		<string>../../..</string>
 		<key>D7770A14563D2CF85508E1CB3D7DDC50864B9F47</key>
 		<string>../../../../ofxKinectFeatures</string>
@@ -33,20 +33,20 @@
 		<string>../../../../ofxOpenNI</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/danaavesar/Jackson-pollock-painting.git</string>
+	<string>https://github.com/danaavesar/abstract-expressionist.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>D39B8F6EE98ACED29A09FA1B237FDDBC580DD296</string>
+	<string>5A1D184CF22FD78F52FF6FE1D4687588E0277DEB</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>D39B8F6EE98ACED29A09FA1B237FDDBC580DD296</string>
+			<string>5A1D184CF22FD78F52FF6FE1D4687588E0277DEB</string>
 			<key>IDESourceControlWCCName</key>
-			<string>myApps</string>
+			<string>abstract-expressionist</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
