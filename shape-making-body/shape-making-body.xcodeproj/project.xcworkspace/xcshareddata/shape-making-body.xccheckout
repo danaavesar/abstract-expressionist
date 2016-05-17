@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C6AA0166-BCFF-44D3-9F6F-6F006A732B19</string>
+	<key>IDESourceControlProjectName</key>
+	<string>project</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>37526DA425E5430474A14FBFA1BC4525160B5FC1</key>
+		<string>https://github.com/kylemcdonald/ofxCv.git</string>
+		<key>5A1D184CF22FD78F52FF6FE1D4687588E0277DEB</key>
+		<string>https://github.com/danaavesar/abstract-expressionist.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>shape-making-body/shape-making-body.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>37526DA425E5430474A14FBFA1BC4525160B5FC1</key>
+		<string>../../../../../addons/ofxCv</string>
+		<key>5A1D184CF22FD78F52FF6FE1D4687588E0277DEB</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/danaavesar/abstract-expressionist.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>5A1D184CF22FD78F52FF6FE1D4687588E0277DEB</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5A1D184CF22FD78F52FF6FE1D4687588E0277DEB</string>
+			<key>IDESourceControlWCCName</key>
+			<string>abstract-expressionist</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>37526DA425E5430474A14FBFA1BC4525160B5FC1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxCv</string>
+		</dict>
+	</array>
+</dict>
+</plist>

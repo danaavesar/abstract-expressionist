@@ -9,6 +9,7 @@
 #include "ofxGui.h"
 #include "SimpleLine.h"
 #include "ofxKinect.h"
+#include "ofxSyphon.h"
 
 enum {
     VELOCITY_MEAN,
@@ -23,7 +24,7 @@ public:
     void draw();
     ofColor mixColor(ofColor color1, ofColor color2);
     int clamp(int _value);
-    void drawShape(ofPoint _position);
+    void drawFloorWindow(ofEventArgs & args);
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y);
@@ -40,15 +41,12 @@ public:
     ofxKinectFeatures featExtractor2;
     ofxKinectFeatures featExtractor3;
     vector <ofxKinectFeatures> featExtractors;
-    vector <ofPoint> prevTorsoPos1;
-    vector <ofPoint> prevTorsoPos2;
-    vector <ofPoint> prevTorsoPos3;
    
     vector<ofxOpenNIUser> prevUsers;
     
-    vector<vector<ofPoint>> shapes;
+    
     //vector<vector<ofPoint>> prevTorsoPos;
-    vector <ofPoint> prevTorsoPos[3] = {prevTorsoPos1, prevTorsoPos2, prevTorsoPos3};
+    vector <ofPoint> prevTorsoPos[3];
     ofxOpenNI kinect;
     bool hadUsers;
    // ofxKinectFeatures featExtractor;
@@ -58,12 +56,20 @@ public:
     int leftHand;
     int torso;
     int loop; //for counting when to multiply the num in delete prevTorsoArray
+    int jumpFeedback [3];
+    int alpha[3];
+    
     ofPoint prevLeftHandPosTorso;
     vector <int> handJointNames = {JOINT_LEFT_HAND, JOINT_RIGHT_HAND};
     map <int,ofPoint> handJointProjectedPos; //ints representing the joints
     map <int,ofPoint> prevHandJointProjectedPos;
     ofPoint prevLeftHipPos[3];
     ofTrueTypeFont font;
+    
+    //saving booleans
+    bool noMoreUsers;
+    bool outsideArea;
+    bool hasStrokes;
     
     //painting
     vector <Stroke> pollockStrokes;
@@ -92,6 +98,8 @@ public:
     int boxSize;
     int y;
     int x;
+    bool drawingShape;
+    bool closeShape;
     
     //contourFInder
     ofxCv::ContourFinder contourFinder;
@@ -100,9 +108,12 @@ public:
     vector <int> lastHoleLabels;
     int frameNumber;
     int timer[3];
-    int timerForJump[3]; 
+    int timerForDoubleJump[3];
    map<int,ofPolyline> holesPolylines;
     vector <ofPolyline> createdShapes;
+    vector <vector<ofColor>> colorsForShape;
+    vector<vector<ofPoint>> shapes;
+    
     int counter;
     int numJumps[3]; //count for jumps for each user
     // GUI
@@ -116,4 +127,18 @@ public:
     //int rightHandVelocity;
     //ofPoint rightHandPosition;
 //    Boolean pollock, prevPollock;
+    
+    ////syphon
+    
+    ofxSyphonServer mainOutputSyphonServer;
+    ofxSyphonServer individualTextureSyphonServer;
+    
+    ofxSyphonClient mClient;
+    
+    
+    ofxSyphonServer mainOutputSyphonServer2;
+    //ofxSyphonServer individualTextureSyphonServer2;
+    
+    ofxSyphonClient mClient2;
+    //ofTexture tex2;
 };

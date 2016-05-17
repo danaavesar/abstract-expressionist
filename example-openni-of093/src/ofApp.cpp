@@ -14,33 +14,40 @@ void ofApp::setup(){
     kinect.start();
     hadUsers = false;
     frameNumber = 0;
+    drawingShape = false;
+    closeShape = false;
     
     counter = 0;
     loop = 1;
     for(int i =0; i<3; i++){
         numJumps[i] = 0;
-        timerForJump[i] = 0; //this is to detect double jump within 80 frames
+        timerForDoubleJump[i] = 0; //this is to detect double jump within 80 frames
         timer[i] = 0; //this one is also for jumping
     }
     //////ofxkinect
     
-    boxSize = 113;
-//    y = ofGetHeight()-60 - boxSize;
-    x = ofGetWidth()-100-boxSize;
-    int buffer = 0;
-    int heightPallet = ofGetHeight() - buffer;
-    int spaceBetween = (heightPallet - (boxSize*5))/5+1;
-    blackPos.set(x, ofGetHeight() - buffer - boxSize);
-    whitePos.set(x, blackPos.y - spaceBetween - boxSize);
-    redPos.set(x, whitePos.y - spaceBetween - boxSize);
-    bluePos.set(x, redPos.y - spaceBetween - boxSize);
-    yellowPos.set(x, bluePos.y - spaceBetween - boxSize);
-
-    canWhite.load("can-white.png");
-    canBlack.load("can-black.png");
-    canYellow.load("can-yellow.png");
-    canRed.load("can-red.png");
-    canBlue.load("can-blue.png");
+//    boxSize = 113;
+////    y = ofGetHeight()-60 - boxSize;
+//    x = ofGetWidth()-100-boxSize;
+//    int buffer = 0;
+//    int heightPallet = ofGetHeight() - buffer;
+//    int spaceBetween = (heightPallet - (boxSize*5))/5+1;
+//    blackPos.set(x, ofGetHeight() - buffer - boxSize);
+//    whitePos.set(x, blackPos.y - spaceBetween - boxSize);
+//    redPos.set(x, whitePos.y - spaceBetween - boxSize);
+//    bluePos.set(x, redPos.y - spaceBetween - boxSize);
+//    yellowPos.set(x, bluePos.y - spaceBetween - boxSize);
+    boxSize = 200;
+    y = ofGetWindowHeight() - 100; //boxheight 113
+    int buffer = 10;
+    int widthPallet = ofGetWindowWidth()-buffer;
+    int spaceBetween = (widthPallet-(boxSize*5))/5+1;
+    blackPos.set(ofGetWindowWidth() - buffer - boxSize, y);
+    whitePos.set(blackPos.x - spaceBetween - boxSize, y);
+    redPos.set(whitePos.x - spaceBetween - boxSize, y);;
+    bluePos.set(redPos.x - spaceBetween - boxSize, y);;
+    yellowPos.set(bluePos.x - spaceBetween - boxSize, y);;
+   
     featExtractors.push_back(featExtractor1);
     featExtractors.push_back(featExtractor2);
     featExtractors.push_back(featExtractor3);
@@ -96,15 +103,32 @@ featExtractor2.setup(JOINT_HEAD, JOINT_TORSO);
     whiteCanSplash.load("paint-splash-white.mov");
     blackCanSplash.load("paint-splash-black.mov");
     yellowCanSplash.load("paint-splash-yellow.mov");
-    redCanSplash.load("paint-splash-red.mov");
-    blueCanSplash.load("paint-splash-blue.mov");
+    redCanSplash.load("paint-splash-magenta.mov");
+    blueCanSplash.load("paint-splash-cyan.mov");
 
     whiteCanSplash.setLoopState(OF_LOOP_NONE);
     blackCanSplash.setLoopState(OF_LOOP_NONE);
     blueCanSplash.setLoopState(OF_LOOP_NONE);
     redCanSplash.setLoopState(OF_LOOP_NONE);
     yellowCanSplash.setLoopState(OF_LOOP_NONE);
+    
+    ///------------syphon stuff
    
+    
+    mainOutputSyphonServer.setName("Floor Output");
+   
+    
+//    mainOutputSyphonServer2.setName("Screen Output2");
+    
+    
+    mClient.setup();
+    mClient2.setup();
+    
+    //using Syphon app Simple Server, found at http://syphon.v002.info/
+    mClient.set("","Simple Server");
+  
+    mClient2.set("","Simple Server");
+    
 
 }
 
@@ -144,6 +168,8 @@ void ofApp::update(){
         kinect.removeUserGenerator();
         kinect.addUserGenerator();
         kinect.setPaused(false);
+       
+
     }
     
     
@@ -261,15 +287,21 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    //syphon
+    // Clear with alpha, so we can capture via syphon and composite elsewhere should we want.
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //--------------------------------------------------------------------
+    
     ofSetColor(ofColor::white);
     float w = ofGetWidth(); //w
     float h = ofGetHeight(); //h
+    ofBackground(255);
     
- 
     ofPushMatrix();
     ofScale(ofGetWidth() / float(kinect.getWidth()), ofGetHeight() / float(kinect.getHeight()));
-    kinect.drawImage();
-    kinect.drawSkeletons();
+//    //kinect.drawImage();
+//    kinect.drawSkeletons();
    // contourFinder.draw();
     
     
@@ -375,18 +407,18 @@ void ofApp::draw(){
                 if(vel.z < 0){
                     vel.z*=-1;
                 }
-                //font.drawString(ofToString(vel.x ),10, 60);
+               
                 if(featExtractor1.lines[jointName] == false){ // each joint in each featExtractor has a bool
                     
 
                     if(vel.x > 200 || vel.y > 200){
-                       //font.drawString(ofToString(vel), handJointProjectedPos[jointName].x, handJointProjectedPos[jointName].y);
+                       
                         counter = 0;
                         featExtractor1.lines[jointName] = true;
                         
                         ofSetColor(255, 255, 255);
                         //if 30 frames have passed since the lase rectangle. this is in order to not make repeating shapes when you make a move
-                        //font.drawString("new line" ,10, 60);
+                       
                         SimpleLine line;
                         line.setup(shoulderPos, handJointProjectedPos[jointName]);
                         simpleLines.push_back(line);
@@ -415,8 +447,7 @@ void ofApp::draw(){
             if(changeLeftHip.y < 0){ changeLeftHip.y *= -1;};
             if(changeLeftHip.x < 0){ changeLeftHip.x *= -1;};
            
-            //font.drawString(ofToString(leftHipPosTorso ),10, 60);
-            //font.drawString(ofToString(changeLeftHip ),10, 90);
+    
           
              if(frameNumber %10 == 0){
             if(changeLeftHip.x  > .05  && featExtractors[i].spiral == false  ){
@@ -458,7 +489,8 @@ void ofApp::draw(){
         }//end for loop
         
     }
-   
+    
+
 //------------------------------- draw to screen -----------------------------//
     ofPushMatrix();
     ofScale(ofGetWidth() / float(kinect.getWidth()), ofGetHeight() / float(kinect.getHeight()));
@@ -472,56 +504,36 @@ void ofApp::draw(){
     }
     if(spirals.size() > 0){
         for(int i=0; i<spirals.size(); i++){
-            //   spirals[i].draw();
+               spirals[i].draw();
         }
     }
     for(int i=0; i< simpleLines.size(); i++){
         ofSetColor(0, 0, 0);
         simpleLines[i].update();
-       // simpleLines[i].draw();
+        simpleLines[i].draw();
     }
     ofPopMatrix();
 
  //   ofDrawBitmapString(os.str(), 20, 30);
     
-     //----------paint cans
-    ofPushStyle();
-    ofSetColor(255);
-//    canWhite.draw(whitePos.x, whitePos.y, boxSize, boxSize);
-    ofFill();
-//    canBlack.draw(blackPos.x, blackPos.y, boxSize, boxSize);
-//    canYellow.draw(yellowPos.x, yellowPos.y, boxSize, boxSize);
-//    canRed.draw(redPos.x, redPos.y, boxSize, boxSize);
-//    canBlue.draw(bluePos.x, bluePos.y, boxSize, boxSize);
+
     
     
     
     //------------------------------- color selection -----------------------------//
-    int vidWidth = 200;
-    int vidHeight = 113;
-    
-    blackCanSplash.draw(blackPos.x,blackPos.y, vidWidth, vidHeight);
-    whiteCanSplash.draw(whitePos.x, whitePos.y, vidWidth, vidHeight);
-    redCanSplash.draw(redPos.x, redPos.y, vidWidth, vidHeight);
-    blueCanSplash.draw(bluePos.x, bluePos.y, vidWidth, vidHeight);
-    yellowCanSplash.draw(yellowPos.x, yellowPos.y, vidWidth, vidHeight);
-    ofPopStyle();
-    
-    if(mouseX > ofGetWidth()/2){
-        blackCanSplash.play();
-    }else{
-        blackCanSplash.stop();
-    }
+
+
     if(kinect.getNumTrackedUsers() >0){
+        
         ofPoint torsoCenterPos[3] = {kinect.worldToProjective(featExtractor1.getPosition(torso)), kinect.worldToProjective(featExtractor2.getPosition(torso)), kinect.worldToProjective(featExtractor3.getPosition(torso))};
         
+        
         for(int i = 0; i<3; i++){
-            
-            ////
-            torsoCenterPos[i].x = ofMap(torsoCenterPos[i].x, 0, 640, 0, 1024);
-            torsoCenterPos[i].z = ofMap(torsoCenterPos[i].z, 0, 4100, 0, 768);
+           
+            torsoCenterPos[i].x = ofMap(torsoCenterPos[i].x, 20, 420, 0, 840);
+            torsoCenterPos[i].z = ofMap(torsoCenterPos[i].z, 0, 2580, 0, 768);
             //min of z currently is 1000 and max 3100
-            font.drawString(ofToString(torsoCenterPos[0].y), 350, 50);
+            
            
             ofSetHexColor(0xFFFFFF);
             if((torsoCenterPos[i].z > blackPos.y) && (torsoCenterPos[i].z < blackPos.y + boxSize) && (torsoCenterPos[i].x > blackPos.x) && (torsoCenterPos[i].x < blackPos.x + boxSize)){
@@ -561,71 +573,109 @@ void ofApp::draw(){
             }
         } // end of for loop color selection
 
+        //------------------------------- detect jump -----------------------------//
         
-//------------------------------- detect jump -----------------------------//
+        //every frame check if the users pos is ___ amount different than it was 40 fraames ago
+        //within 120 frames has it been different at least three times? Did the user jump three times?
         
-        font.drawString(ofToString(torsoCenterPos[0].y),torsoCenterPos[0].x, torsoCenterPos[0].z);
-            if(frameNumber % 50 == 0){ //every 50 frames its erasing the first 29. There are always 20 in there
-               // cout << "prevTorsoPos1 size " << prevTorsoPos1.size() << endl;
-           
-                //loop ++;
-//                prevTorsoPos1.erase(prevTorsoPos1.begin(), prevTorsoPos1.begin()+20*loop);
-//                prevTorsoPos2.erase(prevTorsoPos1.begin(), prevTorsoPos1.begin()+29);
-//                prevTorsoPos3.erase(prevTorsoPos1.begin(), prevTorsoPos1.begin()+29);
-            }
-        
-        
-            //every frame check if the users pos is ___ amount different than it was 40 fraames ago
-            //within 120 frames has it been different at least three times? Did the user jump three times?
-        for(int i=0; i<3; i++){
-            if(prevTorsoPos[i].size() > 40 && kinect.getNumTrackedUsers() >0 ){
-                cout<<"checking for jump user " << i+1;
-                int twentyFramesAgo = prevTorsoPos[i].size() - 40;
-                int diff = torsoCenterPos[i].y - prevTorsoPos[i][twentyFramesAgo].y;
-               
-                if(diff < -40 && timer[i] >5){
-                    timer[i] = 0;
-                    timerForJump[i] = frameNumber;
-                    cout << "jumped" << endl;
-                    numJumps[i] ++;
-                    //user1 jumped
-                    ofSetColor(255, 0, 0);
-                    ofDrawCircle(300,300,50);
-                    if(numJumps[i] == 1){
-                        //add point to shape
-                        int lastShape = shapes.size() -1;
-                        shapes[lastShape].push_back(torsoCenterPos[0]);
-                    }
-                   
-                }
-    
+        for(int i=0; i<kinect.getNumTrackedUsers(); i++){
+            if(prevTorsoPos[i].size() > 60 && kinect.getNumTrackedUsers() >0 ){
+                int fourtyFramesAgo = prevTorsoPos[i].size() - 40;
+                int diff = torsoCenterPos[i].y - prevTorsoPos[i][fourtyFramesAgo].y;
                 
-                if(frameNumber - timerForJump[i] < 80){//one period of jump detection
+                
+                if(diff < -40 && timer[i] >15){ //if positions are different user has jumped
+                    //user jumped
+                    numJumps[i] ++;
+                    cout << "user " << i+1 << " has jumped " << numJumps[i] << " times" << endl;
                     
+                    timer[i] = 0; //set to put five frames in between the diff in y detection
+                    timerForDoubleJump[i] = frameNumber;
+                    
+                    if(numJumps[i] == 1){
+                        
+                        if(drawingShape == true){//add points to the shape
+                            
+                            //add to shape
+                            int lastShape = shapes.size() -1;
+                            cout << "adding point to shape " << lastShape << endl;
+                            shapes[lastShape].push_back(torsoCenterPos[i]);
+                            jumpFeedback[i] = 2;
+                            alpha[i] = 255;
+                            closeShape = false;
+                            colorsForShape[lastShape].push_back(featExtractors[i].color);
+                          
+                        }else{ // start a new shape
+                            cout << "starting new shape " << frameNumber << endl;
+                            vector <ofPoint> newShape;
+                            newShape.push_back(torsoCenterPos[i]);
+                            shapes.push_back(newShape); //push it into the big vector of all the shapes
+                            drawingShape = true;
+                            jumpFeedback[i] = 1;
+                            alpha[i] = 255;
+                           closeShape = false;
+                            vector <ofColor> colors;
+                            colors.push_back(featExtractors[i].color);
+                            colorsForShape.push_back(colors);
+                            
+                        }
+                    } //end if jump once
+                    
+                }//end if jump
+                
+                if(frameNumber - timerForDoubleJump[i] < 60){//fourty frames for double jump detection
                     if(numJumps[i] == 2){
-                        numJumps[i] = 0;
-                        //user has jumped twice
-                        cout << "user has jumped twice in 80 frames" << endl;
-                        //start new shape
-                        vector <ofPoint> newShape;
-                        newShape.push_back(torsoCenterPos[i]);
-                        shapes.push_back(newShape); //push it into the big vector of all the shapes
-                        drawShape(torsoCenterPos[i]);
+                        cout << "user "<< i+1 <<"has jumped twice in 60 frames" << endl;
+                        //add the last point
+                        int lastShape = shapes.size() -1;
+                        shapes[lastShape].push_back(torsoCenterPos[i]);
+                        drawingShape = false;
+                        jumpFeedback[i] = 3;
+                        numJumps[i] = 0; //set number of jumps to 0
+                        alpha[i] = 255;
+                        closeShape = true;
+                        colorsForShape[lastShape].push_back(featExtractors[i].color);
                     }
                 }else{
-                    numJumps[i] = 0;
-                }//end if for period detection
-            }
-        
+                    numJumps[i] = 0; //set number of jumps to 0 after 40 frames
+                }
+                //----------------- draw jump feedback ------------
+                if(jumpFeedback[i] == 2){ // add point
+                    alpha[i] -= 4;
+                        ofPushStyle();
+                        ofFill();
+                        ofSetColor(0, 0, 0, alpha[i]);
+                        ofDrawCircle(torsoCenterPos[i].x, torsoCenterPos[i].z, 15);
+                        ofPopStyle();
+                    
+                }
+                if(jumpFeedback[i] == 1){ // start shape
+                    alpha[i] -= 4;
+                    ofPushStyle();
+                    ofNoFill();
+                    ofSetColor(0, 0, 0, alpha[i]);
+                    ofDrawCircle(torsoCenterPos[i].x, torsoCenterPos[i].z, 15);
+                    ofPopStyle();
+                }
+                if(jumpFeedback[i] == 3){ //close shape
+                    alpha[i] -= 4;
+                    ofPushStyle();
+                    ofNoFill();
+                    ofSetColor(0, 0, 0, alpha[i]);
+                    ofDrawCircle(torsoCenterPos[i].x, torsoCenterPos[i].z, 15);
+                    ofPopStyle();
+                }
+            }//end if statement
+            
         }//end for loop
-        prevTorsoPos1.push_back(torsoCenterPos[0]);
-        prevTorsoPos2.push_back(torsoCenterPos[1]);
-        prevTorsoPos3.push_back(torsoCenterPos[2]);
-        cout << "size " << prevTorsoPos[0].size() << endl;
-      
-    } // end kinect.getnumtracked users if
-    
+        
+        prevTorsoPos[0].push_back(torsoCenterPos[0]);
+        prevTorsoPos[1].push_back(torsoCenterPos[1]);
+        prevTorsoPos[2].push_back(torsoCenterPos[2]);
 
+    }
+    
+    
     
 //------------------------------- color mixing -----------------------------//
 //check if any of the hands in one skeleton are touching the hands in another skeleton
@@ -667,26 +717,78 @@ void ofApp::draw(){
             }//end second loop
         }//end first loop
     }//end if
-    
-    ofSetColor(0, 0, 0);
-    
-    font.drawString(ofToString(featExtractor1.color), 30, 700);
-    
-    //draw the shapes
+    //-----------------------------floor shapes ------------------------------
+    ofPushStyle();
+ 
+    ofSetPolyMode(OF_POLY_WINDING_NONZERO);
     for(int i =0; i< shapes.size(); i++){
-        ofBeginShape();
-        for (int s = 0; s < shapes[i].size(); s++){
-            ofVertex(shapes[i][s].x, shapes[i][s].y);
+        vector <ofColor> colors = colorsForShape[i];
+        //draw outline
+        vector <ofPoint> shape = shapes[i];
+        
+        //check if there are other colors in the colors vector (if other users contributed)
+        for(int c= 0; c<colors.size(); c++){
+                if(colors[0] != colors[c] ){
+                    //color is different from the first one
+                    //colors[c];
+                    
+                }
+            
         }
-        ofEndShape(true);
+        
+//        if(closeShape){
+//            ofFill();
+//            ofSetColor(0);
+//            ofBeginShape();
+//            for (int s = 0; s < shape.size(); s++){
+//                //            shape[s].x = ofMap(shape[s].x, 0, 640, 0, 1024);
+//                //shape[s].z = ofMap(shape[s].z, 0, 4100, 0, 768);
+//                ofCurveVertex(shape[s].x, shape[s].z);
+//            }
+//            ofEndShape(true);
+//        }
+////        
+//        ofSetColor(colors[0]);
+//        ofNoFill();
+//        ofBeginShape();
+//        for (int s = 0; s < shape.size(); s++){
+//            //            shape[s].x = ofMap(shape[s].x, 0, 640, 0, 1024);
+//            //shape[s].z = ofMap(shape[s].z, 0, 4100, 0, 768);
+//            ofCurveVertex(shape[s].x, shape[s].z);
+//        }
+//        ofEndShape(true);
+        
+     
     }
-    //if the distance between posTorso.y in 2 se
-} // end draw
-//--------------------------------------------------------------
-void ofApp::drawShape(ofPoint _position){
-    //user has jumped
+    ofPopStyle();
+
+    //------------------------------- save image -----------------------------//
+    if (!hadUsers){
+       font.drawString("no more users", 650, 50);
+        noMoreUsers = true;
+    }
     
-}
+    if(kinect.getNumTrackedUsers() >0){
+        
+        ofPoint torsoCenterPos[3] = {kinect.worldToProjective(featExtractor1.getPosition(torso)), kinect.worldToProjective(featExtractor2.getPosition(torso)), kinect.worldToProjective(featExtractor3.getPosition(torso))};
+        
+        
+        for(int i = 0; i<3; i++){
+            if(torsoCenterPos[i].z > 2590 || torsoCenterPos[i].x < 60){
+                font.drawString("outside", 650, 50);
+                outsideArea = true;
+            }
+        }
+    }
+    
+    if(pollockStrokes.size() >0 || simpleLines.size() >0 || spirals.size() >0){
+        hasStrokes = true;
+    }
+//------------------------------syphon
+    mClient.draw(50, 50);
+    mainOutputSyphonServer.publishScreen();
+   } // end draw
+
 //--------------------------------------------------------------
 ofColor ofApp::mixColor(ofColor color1, ofColor color2){
      cout << "mix colors function started" <<endl;
@@ -753,6 +855,48 @@ int ofApp::clamp(int value) {
     return value;
 }
 //--------------------------------------------------------------
+void ofApp::drawFloorWindow(ofEventArgs & args){
+    ofBackground(255, 0, 0);
+    //syphon
+    // Clear with alpha, so we can capture via syphon and composite elsewhere should we want.
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //--------------------------------------------------------------------
+    ofPushMatrix();
+    ofScale(ofGetWidth() / float(400), ofGetHeight() / float(kinect.getHeight()));
+    kinect.drawImage();
+    kinect.drawSkeletons();
+    ofPopMatrix();
+    //-----------------------------paint cans ------------------------------
+    ofPushStyle();
+    ofSetColor(255);
+    ofFill();
+    int vidWidth = 200;
+    int vidHeight = 113;
+    blackCanSplash.draw(blackPos.x,blackPos.y, vidWidth, vidHeight);
+    whiteCanSplash.draw(whitePos.x, whitePos.y, vidWidth, vidHeight);
+    redCanSplash.draw(redPos.x, redPos.y, vidWidth, vidHeight);
+    blueCanSplash.draw(bluePos.x, bluePos.y, vidWidth, vidHeight);
+    yellowCanSplash.draw(yellowPos.x, yellowPos.y, vidWidth, vidHeight);
+    ofPopStyle();
+    
+    if(kinect.getNumTrackedUsers() >0){
+        
+        ofPoint torsoCenterPos[3] = {kinect.worldToProjective(featExtractor1.getPosition(torso)), kinect.worldToProjective(featExtractor2.getPosition(torso)), kinect.worldToProjective(featExtractor3.getPosition(torso))};
+        
+        
+        for(int i = 0; i<3; i++){
+            font.drawString(ofToString(torsoCenterPos[0].x), 150, 550);
+        }
+    }
+    //------------------------------syphon
+    mClient2.draw(50, 50);
+    mainOutputSyphonServer2.publishScreen();
+    
+
+
+}
+//--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     switch (key) {
         case OF_KEY_RIGHT:
@@ -781,17 +925,12 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::userEvent(ofxOpenNIUserEvent &event){
-    //    if (event.userStatus == USER_TRACKING_STOPPED) {
-    //        featExtractor.removeSkeleton(0);
-    //    }
+   
 }
 
 void ofApp::mocapMax(MocapMaxEvent &e){
     
-    
-    if (e.feature == FEAT_QOM && e.value > 20.0){
-        cout << "max in QOM!" << endl;
-    }
+
 }
 
 //--------------------------------------------------------------

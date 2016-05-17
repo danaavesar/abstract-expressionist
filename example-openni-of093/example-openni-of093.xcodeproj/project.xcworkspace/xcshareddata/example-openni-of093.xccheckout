@@ -7,7 +7,7 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>61B41389-5A68-4EA7-AE96-2104B1F96DA4</string>
 	<key>IDESourceControlProjectName</key>
-	<string>example-openni-of093</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>37526DA425E5430474A14FBFA1BC4525160B5FC1</key>
@@ -15,12 +15,14 @@
 		<key>5A1D184CF22FD78F52FF6FE1D4687588E0277DEB</key>
 		<string>https://github.com/danaavesar/abstract-expressionist.git</string>
 		<key>D7770A14563D2CF85508E1CB3D7DDC50864B9F47</key>
-		<string>https://github.com/asarasua/ofxKinectFeatures</string>
+		<string>https://github.com/asarasua/ofxKinectFeatures.git</string>
 		<key>D8811CE32924E36E8903BAF4011407E4BAF64556</key>
-		<string>https://github.com/fred-dev/ofxOpenNI</string>
+		<string>https://github.com/fred-dev/ofxOpenNI.git</string>
+		<key>F4CCB893AFADB97238A965FD2F28717F1CAAE613</key>
+		<string>https://github.com/astellato/ofxSyphon.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>example-openni-of093/example-openni-of093.xcodeproj</string>
+	<string>example-openni-of093/example-openni-of093.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>37526DA425E5430474A14FBFA1BC4525160B5FC1</key>
@@ -28,9 +30,11 @@
 		<key>5A1D184CF22FD78F52FF6FE1D4687588E0277DEB</key>
 		<string>../../..</string>
 		<key>D7770A14563D2CF85508E1CB3D7DDC50864B9F47</key>
-		<string>../../../../ofxKinectFeatures</string>
+		<string>../../../../../addons/ofxKinectFeatures</string>
 		<key>D8811CE32924E36E8903BAF4011407E4BAF64556</key>
-		<string>../../../../ofxOpenNI</string>
+		<string>../../../../../addons/ofxOpenNI</string>
+		<key>F4CCB893AFADB97238A965FD2F28717F1CAAE613</key>
+		<string>../../../../../addons/ofxSyphon</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/danaavesar/abstract-expressionist.git</string>
@@ -71,6 +75,14 @@
 			<string>D8811CE32924E36E8903BAF4011407E4BAF64556</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxOpenNI</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F4CCB893AFADB97238A965FD2F28717F1CAAE613</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxSyphon</string>
 		</dict>
 	</array>
 </dict>
